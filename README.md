@@ -33,7 +33,6 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
 3. Install requirements:
    ```bash
    pip install -r requirements.txt
-   mkdir messages
    ```
 
 4. Create a `.env` file in the root directory and add your Groq API key:
