@@ -1,0 +1,11 @@
+./logs
+./__pycache__
+venv/
+./.env
+./db.sqlite3
+.env
+db.sqlite3
+__pycache__/groq_transcriber.cpython-312.pyc
+logs/debug.log
+logs/error.log
+logs/*
