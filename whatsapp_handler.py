@@ -33,17 +33,21 @@ client = NewAClient("db.sqlite3")
 
 @client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
+    
     log.info("⚡ Connected")
 
 
 async def handler(client: NewAClient, message: MessageEv) -> dict:
+    
     result = {"audio_path": str(message.Message.audioMessage.directPath),
     "audio_enc_hash": message.Message.audioMessage.fileEncSHA256,
     "audio_file_hash": message.Message.audioMessage.fileSHA256,
     "audio_media_key": message.Message.audioMessage.mediaKey,
     "audio_file_length": message.Message.audioMessage.fileLength,
     "audio_media_type": MediaType(2),
-    "audio_mms_type": str(2)}
+    "audio_mms_type": str(2)
+    }
+    
     chat = message.Info.MessageSource.Chat
     return message, result, chat
 
@@ -51,9 +55,11 @@ async def handler(client: NewAClient, message: MessageEv) -> dict:
 
 @client.event(PairStatusEv)
 async def PairStatusMessage(_: NewAClient, message: PairStatusEv):
+    
     log.info(f"logged as {message.ID.User}")
 
 async def handle_audio_message(message, result, chat):
+    
     direct_path = result.get('audio_path')
     enc_file_hash = result.get('audio_enc_hash')
     file_hash = result.get('audio_file_hash')
@@ -81,6 +87,7 @@ async def start():
 
 @client.event(MessageEv)
 async def on_message(client: NewAClient, message: MessageEv):
+    
     is_audio = get_message_type(message)
     if "audioMessage {" in str(is_audio):
         message, result, chat = await handler(client, message)
