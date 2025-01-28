@@ -21,7 +21,7 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/krypton-byte/neonize && cd neonize && git clone https://github.com/gustavokch/whatsapp_audio_transcriber ../neonize
+   git clone https://github.com/krypton-byte/neonize && cd neonize && git clone https://github.com/gustavokch/whatsapp_audio_transcriber && mv whatsapp_audio_transcriber/* .
    ```
 
 2. Install dependencies using Poetry:
