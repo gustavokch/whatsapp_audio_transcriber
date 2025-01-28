@@ -63,6 +63,7 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
 - `python-dotenv` - Environment variable management
 - `asyncio` - Asynchronous programming support
 - `typing` - Type hints for better code clarity
+- `neonize` - python wrapper for the "whatsmeow" Go implementation of the WhatsApp Web API 
 
 ## Notes
 
