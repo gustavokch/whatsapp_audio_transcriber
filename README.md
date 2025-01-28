@@ -15,7 +15,7 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
 - Python 3.8 or higher
 - WhatsApp account with WhatsApp Web access
 - Groq API key (obtain from [Groq](https://www.groq.com/))
-- Poetry for dependency management
+- pip and python3-venv
 
 ## Installation
 
