@@ -24,13 +24,18 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
    git clone https://github.com/gustavokch/whatsapp_audio_transcriber && cd whatsapp_audio_transcriber
    ```
 
-2. Install requirements:
+2. Create a venv:
    ```bash
-   pip install neonize
+   python -m venv venv
+   . ./venv/bin/activate
+   ```
+
+3. Install requirements:
+   ```bash
    pip install -r requirements.txt
    ```
 
-3. Create a `.env` file in the root directory and add your Groq API key:
+4. Create a `.env` file in the root directory and add your Groq API key:
    ```bash
    echo "GROQ_API_KEY=your_api_key_here" > .env
    ```
