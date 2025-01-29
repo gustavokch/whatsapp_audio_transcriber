@@ -153,7 +153,8 @@ async def handle_audio_message(message: MessageEv, result: dict, chat: str) -> N
 
         # Reply with transcription
         transcription = transcription.lstrip(' ')
-        reply_text = f"Transcrição automática: \n\n{transcription}"
+        transcription = '_'+transcription+'_'
+        reply_text = f"*Transcrição automática:*\n\n{transcription}"
         
         info_logger.info(f"Replying with transcription to chat: {chat}")
         await client.reply_message(

@@ -9,3 +9,4 @@ __pycache__/groq_transcriber.cpython-312.pyc
 logs/debug.log
 logs/error.log
 logs/*
+whatsapp_handler_mi.py
