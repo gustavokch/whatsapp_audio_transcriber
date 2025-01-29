@@ -21,10 +21,7 @@ from neonize.utils.enum import ReceiptType, MediaType
 
 sys.path.insert(0, os.getcwd())
 
-whisper_prompt =  """Transcreva com precisão, preservando enunciados conforme falados.
-Corrija erros ortográficos comuns sem alterar a intenção original.
-Mantenha a pontuação natural para facilitar a leitura. Foda-se. Amorzinho.
-"""
+whisper_prompt =  """Transcreva com precisão, preservando enunciados conforme falados. Corrija erros ortográficos comuns sem alterar a intenção original. Use pontuação e capitalização de forma natural para facilitar a leitura. Foda-se. Amorzinho."""
 
 # Setup logging to different files
 log_dir = "logs"
