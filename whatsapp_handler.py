@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 import signal
-
+import shutil
+from pathlib import Path
 from groq_transcriber import transcribe_audio_groq
 from datetime import timedelta
 from neonize.aioze.client import NewAClient
@@ -20,10 +21,18 @@ from neonize.utils.enum import ReceiptType, MediaType
 
 sys.path.insert(0, os.getcwd())
 
+whisper_prompt =  """Transcreva com precisão, preservando enunciados conforme falados.
+Corrija erros ortográficos comuns sem alterar a intenção original.
+Mantenha a pontuação natural para facilitar a leitura. Foda-se. Amorzinho.
+"""
+
 # Setup logging to different files
 log_dir = "logs"
 os.makedirs(log_dir, exist_ok=True)
+log_dir_path = os.path.abspath(f"./{log_dir}")
+shutil.rmtree(f"{log_dir_path}", ignore_errors=True)
 os.makedirs("./messages", exist_ok=True)
+os.makedirs(log_dir, exist_ok=True)
 
 def interrupted(*_):
     event.set()
@@ -145,7 +154,7 @@ async def handle_audio_message(message: MessageEv, result: dict, chat: str) -> N
 
         # Transcribe audio using Groq API
         info_logger.info(f"Transcribing audio file: {file_path}")
-        transcription = await transcribe_audio_groq(audio_path=file_path, prompt=None, language='pt')
+        transcription = await transcribe_audio_groq(audio_path=file_path, prompt=whisper_prompt, language='pt')
         info_logger.info("Audio transcription completed.")
 
         os.remove(file_path) # Clean up audio file after transcription
