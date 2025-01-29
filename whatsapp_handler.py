@@ -201,6 +201,27 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     message_type = get_message_type(message) # Determine message type
     debug_logger.debug(f"Received message of type: {message_type}")
 
+    if 'text: "*Transcrição automática:*' in str(message_type): # Check if it's an audio message
+        debug_logger.debug("Message is already a transcription!")
+        try:
+            message_data, result, chat = await handler(client, message) # Extract message data
+            await handle_audio_message(message=message_data, result=result, chat=chat) # Process audio message
+        except Exception as e:
+            error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
+    else:
+        debug_logger.debug(f"Ignoring transcription message of type: {message_type}")
+
+
+    if 'text: "Erro ao processar o áudio.' in str(message_type): # Check if it's an audio message
+        debug_logger.debug("Message is a transcription error message.")
+        try:
+            message_data, result, chat = await handler(client, message) # Extract message data
+            await handle_audio_message(message=message_data, result=result, chat=chat) # Process audio message
+        except Exception as e:
+            error_logger.error(f"Error processing audio message in on_message handler: {e}", exc_info=True)
+    else:
+        debug_logger.debug(f"Ignoring error message of type: {message_type}")
+
     if "audioMessage {" in str(message_type): # Check if it's an audio message
         debug_logger.debug("Message is an audio message.")
         try:
@@ -216,3 +237,5 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
 # Main application entry point
 if __name__ == "__main__":
     asyncio.run(start())
+
+    
