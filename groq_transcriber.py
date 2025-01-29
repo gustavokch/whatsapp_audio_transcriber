@@ -11,7 +11,7 @@ os.makedirs(log_dir, exist_ok=True)
 
 debug_logger = logging.getLogger(__name__)
 debug_logger.setLevel(logging.DEBUG)
-debug_handler = logging.FileHandler(os.path.join(log_dir, 'debug.log'))
+debug_handler = logging.FileHandler(os.path.join(log_dir, 'debug_groq_transcriber.log'))
 debug_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
 debug_handler.setFormatter(debug_formatter)
 debug_logger.addHandler(debug_handler)
