@@ -187,7 +187,6 @@ async def start() -> None:
     finally:
         info_logger.info("Client application finished.")
 
-
 @client.event(MessageEv)
 async def on_message(client: NewAClient, message: MessageEv) -> None:
     """
@@ -205,20 +204,30 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
         debug_logger.debug("Message is already a transcription!")
         try:
             message_data, result, chat = await handler(client, message) # Extract message data
-            await handle_audio_message(message=message_data, result=result, chat=chat) # Process audio message
+            try:
+                await asyncio.wait_for(handle_audio_message(message=message_data, result=result, chat=chat), timeout=5.0)
+            except asyncio.TimeoutError:
+                # Handle the timeout case
+                print("Audio message handling timed out")
         except Exception as e:
             error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
+        return
     else:
         debug_logger.debug(f"Ignoring transcription message of type: {message_type}")
-
+    
 
     if 'text: "Erro ao processar o áudio.' in str(message_type): # Check if it's an audio message
         debug_logger.debug("Message is a transcription error message.")
         try:
             message_data, result, chat = await handler(client, message) # Extract message data
-            await handle_audio_message(message=message_data, result=result, chat=chat) # Process audio message
+            try:
+                await asyncio.wait_for(handle_audio_message(message=message_data, result=result, chat=chat), timeout=5.0)
+            except asyncio.TimeoutError:
+                # Handle the timeout case
+                print("Audio message handling timed out")
         except Exception as e:
-            error_logger.error(f"Error processing audio message in on_message handler: {e}", exc_info=True)
+            error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
+            return
     else:
         debug_logger.debug(f"Ignoring error message of type: {message_type}")
 
@@ -226,9 +235,14 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
         debug_logger.debug("Message is an audio message.")
         try:
             message_data, result, chat = await handler(client, message) # Extract message data
-            await handle_audio_message(message=message_data, result=result, chat=chat) # Process audio message
+            try:
+                await asyncio.wait_for(handle_audio_message(message=message_data, result=result, chat=chat), timeout=5.0)
+            except asyncio.TimeoutError:
+                # Handle the timeout case
+                print("Audio message handling timed out")
         except Exception as e:
-            error_logger.error(f"Error processing audio message in on_message handler: {e}", exc_info=True)
+            error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
+            return
     else:
         debug_logger.debug(f"Ignoring non-audio message of type: {message_type}")
 
