@@ -241,11 +241,14 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
         debug_logger.debug("Message is an audio message.")
         try:
             message_data, result, chat = await handler(client, message) # Extract message data
-            try:
-                await asyncio.wait_for(handle_audio_message(message=message_data, result=result, chat=chat), timeout=5.0)
-            except asyncio.TimeoutError:
-                # Handle the timeout case
-                print("Audio message handling timed out")
+            if message.Info.MessageSource.IsGroup == False:
+                try:
+                    await asyncio.wait_for(handle_audio_message(message=message_data, result=result, chat=chat), timeout=5.0)
+                except asyncio.TimeoutError:
+                    # Handle the timeout case
+                    print("Audio message handling timed out")
+            else:
+                info_logger.info("Message is from a group, ignoring...")
         except Exception as e:
             error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
             return
