@@ -31,7 +31,6 @@ def interrupted(*_):
     event.set()
 
 neonize_log.setLevel(logging.INFO)
-signal.signal(signal.SIGINT, interrupted)
 
 # Configure logging
 logging.basicConfig(
@@ -162,7 +161,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
         send_reply = 0
-    elif 'text: "*Transcrição automática:*' in str(message_type): # Check if it's an audio message
+    elif 'text: "*Transcrição automática:*' in str(message_type): 
         info_logger.info("Message is already a transcription, ignoring...")
         send_reply = 0
         
@@ -193,7 +192,18 @@ async def start() -> None:
     except Exception as e:
         error_logger.error(f"Failed to start client: {e}", exc_info=True)
     finally:
+        event.set()
+        await client.disconnect()
         info_logger.info("Client application finished.")
 
+async def main():
+    try:
+        await start()
+    except KeyboardInterrupt:
+        info_logger.info("KeyboardInterrupt received, shutting down...")
+    finally:
+        event.set()
+        await client.disconnect()  # Ensure cleanup before exiting
+
 if __name__ == "__main__":
-    asyncio.run(start())
+    asyncio.run(main())
