@@ -159,6 +159,13 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     message_type = get_message_type(message)
     debug_logger.debug(f"Received message of type: {message_type}")
 
+    if 'text: "Erro ao processar o áudio.' in str(message_type):
+        info_logger.info("Message is a transcription error message, ignoring...")
+        return
+    if 'text: "*Transcrição automática:*' in str(message_type): # Check if it's an audio message
+        info_logger.info("Message is already a transcription, ignoring...")
+        return
+
     if "audioMessage {" in str(message_type):  # Check if it's an audio message
         debug_logger.debug("Message is an audio message.")
         try:
@@ -166,7 +173,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
             await job.extract_audio_details()
             if message.Info.MessageSource.IsGroup == False:
                 try:
-                    await asyncio.wait_for(job.handle_audio_message(), timeout=5.0)
+                    await asyncio.wait_for(job.handle_audio_message(), timeout=15.0)
                 except asyncio.TimeoutError:
                     error_logger.error("Audio message handling timed out")
             else:
