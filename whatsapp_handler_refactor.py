@@ -162,11 +162,11 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
         return
-    if 'text: "*Transcrição automática:*' in str(message_type): # Check if it's an audio message
+    elif 'text: "*Transcrição automática:*' in str(message_type): # Check if it's an audio message
         info_logger.info("Message is already a transcription, ignoring...")
         return
 
-    if "audioMessage {" in str(message_type):  # Check if it's an audio message
+    elif "audioMessage {" in str(message_type):  # Check if it's an audio message
         debug_logger.debug("Message is an audio message.")
         try:
             job = TranscriptionJob(client, message)
