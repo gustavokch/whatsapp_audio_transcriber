@@ -117,8 +117,8 @@ class TranscriptionJob:
 
             # Transcribe audio using Groq API
             info_logger.info(f"Transcribing audio file: {file_path}")
-            #transcription = await transcribe_audio_groq(audio_path=file_path, prompt=WHISPER_PROMPT, language='pt')
-            transcription = await cf_transcribe(audio_path=file_path, model='@cf/openai/whisper-large-v3-turbo', language='pt')
+            transcription = await transcribe_audio_groq(audio_path=file_path, prompt=WHISPER_PROMPT, language='pt')
+            #transcription = await cf_transcribe(audio_path=file_path, model='@cf/openai/whisper-large-v3-turbo', language='pt')
             info_logger.info("Audio transcription completed.")
 
             os.remove(file_path)  # Clean up audio file after transcription
