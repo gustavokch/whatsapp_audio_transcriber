@@ -11,3 +11,4 @@ logs/error.log
 logs/*
 whatsapp_handler_mi.py
 .whatsapp_handler.py.swp
+__pycache__/cf_transcriber.cpython-312.pyc
