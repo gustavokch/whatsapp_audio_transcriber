@@ -10,4 +10,3 @@ else
     echo "1" > reqs_installed
     python whatsapp_handler_refactor.py
 fi
-
