@@ -1,3 +1,13 @@
 #!/bin/bash
+cd $GUSDIR
 . ./venv/bin/activate
-python whatsapp_handler_refactor.py &>/tmp/whatsapp_handler.log&
+
+if [ -f reqs_installed ] && grep -q "^1$" reqs_installed; then
+    python whatsapp_handler_refactor.py &>logs/handler.log&
+else
+    touch reqs_installed
+    pip install -r requirements.txt
+    echo "1" > reqs_installed
+    python whatsapp_handler_refactor.py &>logs/handler.log&
+fi
+

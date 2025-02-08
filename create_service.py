@@ -1,0 +1,85 @@
+import os
+
+def create_systemd_unit(name: str):
+    currentdir = os.getcwd()
+    filename = f"whatsapp_{name}.service"
+    content = f"""[Unit]
+Description=Run WhatsApp transcriber ({name})
+After=network.target
+
+[Service]
+Type=simple
+Environment="BASEDIR={currentdir}"
+Environment="TMPLOGDIR={currentdir}/logs"
+ExecStart=/bin/bash -c "${{BASEDIR}}/start.sh"
+Restart=always
+RestartSec=5s
+StandardOutput=append:{currentdir}/logs/systemd.log
+StandardError=append:{currentdir}/logs/systemd.log
+
+[Install]
+WantedBy=default.target
+
+[Timer]
+OnBootSec=0
+OnUnitActiveSec=2h
+"""
+    restarter_content = f"""[Unit]
+Description=Restart WhatsApp Mime and Gus services
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
+"""
+    timer_content = f"""[Unit]
+Description=Restart WhatsApp services every 2 hours
+
+[Timer]
+OnCalendar=*-*-* */2:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target"""
+    
+    with open(filename, "w") as file:
+        file.write(content)
+    print(f"Systemd unit file '{filename}' created successfully.")
+    with open("restart_whatsapp_services.service", "w") as file:
+        file.write(restarter_content)
+    print(f"Systemd unit file 'restart_whatsapp_services.service' created successfully.")
+    with open("restart_whatsapp_services.timer", "w") as file:
+        file.write(timer_content)
+    print(f"Systemd unit file 'restart_whatsapp_services.timer' created successfully.")
+# Example usage:
+
+name = input("Name prefix: ")  # Replace with the desired name
+currentdir = os.getcwd()
+
+if currentdir == f"/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
+    os.environ["GUSDIR"] = currentdir
+elif currentdir == f"/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
+    os.environ["MIMEDIR"] = currentdir
+    with open("start.sh", "w") as file:
+        start_script = file.read()
+        start_script = start_script.replace("GUSDIR", "MIMEDIR")
+if name != "gus" and name != "mime":
+    print("Invalid name prefix. Please use 'gus' or 'mime'.")
+    exit(1)
+create_systemd_unit(name)
+copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
+if copy == "1":
+    os.system(f"cp -f whatsapp_*.service ~/.config/systemd/user/")
+    os.system(f"cp -f restart_whatsapp_services.* ~/.config/systemd/user/") 
+    os.system(f"systemctl --user daemon-reload")
+    if name != "mime":
+        os.system(f"systemctl --user enable whatsapp_gus.service")
+        os.system(f"systemctl --user start whatsapp_gus.service")
+        print(f"Service enabled and started.")
+    elif name != "gus":
+        os.system(f"systemctl --user enable whatsapp_mime.service")
+        os.system(f"systemctl --user start whatsapp_mime.service")
+        print(f"Service enabled and started.")
+    else:
+        os.system(f"systemctl --user enable whatsapp_{name}.service")
+        os.system(f"systemctl --user start whatsapp_{name}.service")
+        print(f"Service enabled and started.")
