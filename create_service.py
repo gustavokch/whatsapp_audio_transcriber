@@ -83,3 +83,5 @@ if copy == "1":
         os.system(f"systemctl --user enable whatsapp_{name}.service")
         os.system(f"systemctl --user start whatsapp_{name}.service")
         print(f"Service enabled and started.")
+    os.system(f"systemctl --user enable restart_whatsapp_services.service")
+    os.system(f"systemctl --user enable restart_whatsapp_services.timer")
