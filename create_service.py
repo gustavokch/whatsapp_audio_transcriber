@@ -61,9 +61,9 @@ currentdir = os.getcwd()
 with open("start.sh", "r") as file:
     start_script = file.read()
 if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
-    os.environ["GUSDIR"] = f"'{currentdir}'"
+    os.environ["GUSDIR"] = str(currentdir)
 elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
-    os.environ["MIMEDIR"] = f"'{currentdir}'"
+    os.environ["MIMEDIR"] = str(currentdir)
     start_script = start_script.replace("$GUSDIR", "$MIMEDIR")
     with open("start.sh", "w") as file:
         file.write(start_script)
