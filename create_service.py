@@ -62,9 +62,13 @@ with open("start.sh", "r") as file:
     start_script = file.read()
 if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
     os.environ["GUSDIR"] = str(currentdir)
+    print(str(os.system("echo $GUSDIR")))
+
 elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
     os.environ["MIMEDIR"] = str(currentdir)
+    print(str(os.system("echo $MIMEDIR")))
     start_script = start_script.replace("$GUSDIR", "$MIMEDIR")
+
     with open("start.sh", "w") as file:
         file.write(start_script)
 if name != "gus" and name != "mime":
