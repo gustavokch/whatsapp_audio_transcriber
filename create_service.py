@@ -16,8 +16,8 @@ Environment="TMPLOGDIR={currentdir}/logs"
 ExecStart=/bin/bash -c "{currentdir}/start.sh"
 Restart=always
 RestartSec=5s
-StandardOutput=append:{currentdir}/logs/handler.log
-StandardError=append:{currentdir}/logs/handler.log
+StandardOutput=append:{currentdir}/logs/systemd.log
+StandardError=append:{currentdir}/logs/systemd.log
 
 [Install]
 WantedBy=default.target
