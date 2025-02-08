@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 currentdir = os.getcwd()
 
@@ -65,31 +66,18 @@ def fix_start_script():
         start_script = file.read()
         print("Script read successfully.")
         if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
-            os.system(f"export GUSDIR={str(currentdir)}")
             print("Dir variable: "+str(os.system("echo $GUSDIR")))
+            start_script = start_script.replace("$GUSDIR", str(currentdir))
+            
 
         elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
-            os.system(f"export GUSDIR={str(currentdir)}")
-            print(str(os.system("echo $MIMEDIR")))
-            start_script = start_script.replace("$GUSDIR", "$MIMEDIR")
-            print("Dir variable: "+str(os.system("echo $MIMEDIR")))
+            start_script = start_script.replace("$GUSDIR", str(currentdir))
 
     with open("start.sh", "w") as file:
         file.write(start_script)
         print("start.sh script updated successfully.")
-# Example usage:
-name = input("Name prefix: ")  # Replace with the desired name
-currentdir = os.getcwd()
 
-if name != "gus" and name != "mime":
-    print("Invalid name prefix. Please use 'gus' or 'mime'.")
-    exit(1)
-
-fix_start_script()
-create_systemd_unit(name)
-
-copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
-if copy == "1":
+def copy_files(name):
     os.system(f"cp -f whatsapp_*.service ~/.config/systemd/user/")
     if name != "mime":
         os.system(f"systemctl --user daemon-reload")
@@ -110,3 +98,17 @@ if copy == "1":
     os.system(f"systemctl --user daemon-reload")
     os.system(f"systemctl --user enable restart_whatsapp_services.service")
     os.system(f"systemctl --user enable restart_whatsapp_services.timer")
+
+# Example usage:
+name = input("Name prefix: ")  # Replace with the desired name
+currentdir = os.getcwd()
+
+if name != "gus" and name != "mime":
+    print("Invalid name prefix. Please use 'gus' or 'mime'.")
+    exit(1)
+fix_start_script()
+create_systemd_unit(name)
+
+copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
+if copy == "1":
+    copy_files(name)
