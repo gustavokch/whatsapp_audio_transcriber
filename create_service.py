@@ -60,6 +60,7 @@ def create_systemd_unit(name: str):
 
 def fix_start_script():
     currentdir = os.getcwd()
+    print(currentdir)
     with open("start.sh", "r") as file:
         start_script = file.read()
         print("Script read successfully.")
