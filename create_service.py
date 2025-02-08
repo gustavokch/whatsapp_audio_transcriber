@@ -30,6 +30,9 @@ Description=Restart WhatsApp Mime and Gus services
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
+
+[Install]
+WantedBy=default.target
 """
     timer_content = f"""[Unit]
 Description=Restart WhatsApp services every 2 hours
