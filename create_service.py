@@ -72,7 +72,7 @@ def fix_start_script():
         elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
             start_script = start_script.replace("$GUSDIR", str(currentdir))
     file.close()
-    with open("start.sh", "w") as file:
+    with open("start.sh", "x") as file:
         file.write(start_script)
         print("start.sh script updated successfully.")
 
