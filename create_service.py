@@ -39,7 +39,8 @@ OnCalendar=*-*-* */2:00:00
 Persistent=true
 
 [Install]
-WantedBy=timers.target"""
+WantedBy=timers.target
+"""
     
     with open(filename, "w") as file:
         file.write(content)
