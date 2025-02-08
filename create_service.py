@@ -7,46 +7,46 @@ def create_systemd_unit(name: str):
 
     filename = f"whatsapp_{name}.service"
     content = f"""[Unit]
-    Description=Run WhatsApp transcriber ({name})
-    After=network.target
+Description=Run WhatsApp transcriber ({name})
+After=network.target
 
-    [Service]
-    Type=simple
-    Environment="BASEDIR={currentdir}"
-    Environment="TMPLOGDIR={currentdir}/logs"
-    ExecStart=/bin/bash -c "${{BASEDIR}}/start.sh"
-    Restart=always
-    RestartSec=5s
-    StandardOutput=append:{currentdir}/logs/systemd.log
-    StandardError=append:{currentdir}/logs/systemd.log
+[Service]
+Type=simple
+Environment="BASEDIR={currentdir}"
+Environment="TMPLOGDIR={currentdir}/logs"
+ExecStart=/bin/bash -c "${{BASEDIR}}/start.sh"
+Restart=always
+RestartSec=5s
+StandardOutput=append:{currentdir}/logs/systemd.log
+StandardError=append:{currentdir}/logs/systemd.log
 
-    [Install]
-    WantedBy=default.target
+[Install]
+WantedBy=default.target
 
-    [Timer]
-    OnBootSec=0
-    OnUnitActiveSec=2h
-    """
+[Timer]
+OnBootSec=0
+OnUnitActiveSec=2h
+"""
     restarter_content = f"""[Unit]
-    Description=Restart WhatsApp Mime and Gus services
+Description=Restart WhatsApp Mime and Gus services
 
-    [Service]
-    Type=oneshot
-    ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
 
-    [Install]
-    WantedBy=default.target
-    """
+[Install]
+WantedBy=default.target
+"""
     timer_content = f"""[Unit]
-    Description=Restart WhatsApp services every 2 hours
+Description=Restart WhatsApp services every 2 hours
 
-    [Timer]
-    OnCalendar=*-*-* */2:00:00
-    Persistent=true
+[Timer]
+OnCalendar=*-*-* */2:00:00
+Persistent=true
 
-    [Install]
-    WantedBy=timers.target
-    """
+[Install]
+WantedBy=timers.target
+"""
         
 
     with open(filename, "w") as file:
