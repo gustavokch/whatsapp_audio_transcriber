@@ -58,14 +58,13 @@ WantedBy=timers.target
 
 name = input("Name prefix: ")  # Replace with the desired name
 currentdir = os.getcwd()
-
-if currentdir == f"/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
-    os.environ["GUSDIR"] = currentdir
-elif currentdir == f"/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
-    os.environ["MIMEDIR"] = currentdir
-    with open("start.sh", "r") as file:
-        start_script = file.read()
-        start_script = start_script.replace("GUSDIR", "MIMEDIR")
+with open("start.sh", "r") as file:
+    start_script = file.read()
+if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
+    os.environ["GUSDIR"] = f"'{currentdir}'"
+elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
+    os.environ["MIMEDIR"] = f"'{currentdir}'"
+    start_script = start_script.replace("$GUSDIR", "$MIMEDIR")
     with open("start.sh", "w") as file:
         file.write(start_script)
 if name != "gus" and name != "mime":
