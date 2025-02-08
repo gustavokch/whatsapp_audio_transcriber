@@ -13,7 +13,7 @@ After=network.target
 [Service]
 Type=simple
 Environment="TMPLOGDIR={currentdir}/logs"
-ExecStart=/bin/bash -c "${currentdir}/start.sh"
+ExecStart=/bin/bash -c "{currentdir}/start.sh"
 Restart=always
 RestartSec=5s
 StandardOutput=append:{currentdir}/logs/systemd.log
