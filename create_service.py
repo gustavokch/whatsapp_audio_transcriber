@@ -63,11 +63,11 @@ def fix_start_script():
         start_script = file.read()
         print("Script read successfully.")
         if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
-            os.environ["GUSDIR"] = str(currentdir)
+            os.system(f"export GUSDIR={str(currentdir)}")
             print("Dir variable: "+str(os.system("echo $GUSDIR")))
 
         elif currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber_mime":
-            os.environ["MIMEDIR"] = str(currentdir)
+            os.system(f"export GUSDIR={str(currentdir)}")
             print(str(os.system("echo $MIMEDIR")))
             start_script = start_script.replace("$GUSDIR", "$MIMEDIR")
             print("Dir variable: "+str(os.system("echo $MIMEDIR")))
