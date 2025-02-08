@@ -1,9 +1,8 @@
 import os
 
-def create_systemd_unit(name: str):
-    currentdir = os.getcwd()
-    filename = f"whatsapp_{name}.service"
-    content = f"""[Unit]
+currentdir = os.getcwd()
+filename = f"whatsapp_{name}.service"
+content = f"""[Unit]
 Description=Run WhatsApp transcriber ({name})
 After=network.target
 
@@ -24,7 +23,7 @@ WantedBy=default.target
 OnBootSec=0
 OnUnitActiveSec=2h
 """
-    restarter_content = f"""[Unit]
+restarter_content = f"""[Unit]
 Description=Restart WhatsApp Mime and Gus services
 
 [Service]
@@ -34,7 +33,7 @@ ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.s
 [Install]
 WantedBy=default.target
 """
-    timer_content = f"""[Unit]
+timer_content = f"""[Unit]
 Description=Restart WhatsApp services every 2 hours
 
 [Timer]
@@ -45,6 +44,9 @@ Persistent=true
 WantedBy=timers.target
 """
     
+
+def create_systemd_unit(name: str):
+
     with open(filename, "w") as file:
         file.write(content)
     print(f"Systemd unit file '{filename}' created successfully.")
@@ -60,6 +62,7 @@ name = input("Name prefix: ")  # Replace with the desired name
 currentdir = os.getcwd()
 with open("start.sh", "r") as file:
     start_script = file.read()
+    print("Script read successfully.")
     if currentdir == "/home/ubuntu/whatsapp_bots/whatsapp_audio_transcriber":
         os.environ["GUSDIR"] = str(currentdir)
         print(str(os.system("echo $GUSDIR")))
@@ -71,6 +74,8 @@ with open("start.sh", "r") as file:
 
 with open("start.sh", "w") as file:
     file.write(start_script)
+    print("start.sh script updated successfully.")
+
 if name != "gus" and name != "mime":
     print("Invalid name prefix. Please use 'gus' or 'mime'.")
     exit(1)
