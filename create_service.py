@@ -79,11 +79,14 @@ def fix_start_script():
 # Example usage:
 name = input("Name prefix: ")  # Replace with the desired name
 currentdir = os.getcwd()
+
 if name != "gus" and name != "mime":
     print("Invalid name prefix. Please use 'gus' or 'mime'.")
     exit(1)
+
 fix_start_script()
 create_systemd_unit(name)
+
 copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
 if copy == "1":
     os.system(f"cp -f whatsapp_*.service ~/.config/systemd/user/")
