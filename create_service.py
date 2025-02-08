@@ -59,6 +59,7 @@ def create_systemd_unit(name: str):
     print(f"Systemd unit file 'restart_whatsapp_services.timer' created successfully.")
 
 def fix_start_script():
+    currentdir = os.getcwd()
     with open("start.sh", "r") as file:
         start_script = file.read()
         print("Script read successfully.")
