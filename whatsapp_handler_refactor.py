@@ -179,7 +179,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     debug_logger.debug(f"Received message of type: {message_type}")
     send_reply = 1
     if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type):
-        with open("exclude.txt", "w") as exclude_txt:
+        with open("exclude.txt", "a") as exclude_txt:
             msg_string =  str(message_type)
             exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
             print(f"Adding number {exclude_number} to exclude.txt")
@@ -252,7 +252,7 @@ async def main():
         await client.disconnect()  # Ensure cleanup before exiting
 
 if __name__ == "__main__":
-    if not os.path.isfile("./exclude.txt"):
+    if not os.path.isfile("exclude.txt"):
         with open("exclude.txt", "x") as exclude_txt:
             exclude_txt.write
     asyncio.run(main())
