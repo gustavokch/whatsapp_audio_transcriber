@@ -182,17 +182,18 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
         with open("exclude.txt", "r") as exclude_txt:
 
             msg_string =  str(message_type)
-            exclude_number = "\n"+msg_string.split("/exclude ")[1].split('"')[0]+"\n"
+            exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
             exclude_list = exclude_txt.readlines()
             if exclude_number not in exclude_list:
-                print(f"Adding number {exclude_number} to exclude.txt")
+                print(f"Adding number {exclude_number.replace("\n","")} to exclude.txt")
                 exclude_txt.close()
                 with open("exclude.txt","a") as exclude_append:
-                    exclude_append.writelines(exclude_number)
+                    exclude_append.writelines(exclude_number+"\n")
                     exclude_append.close()
-                    load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+                    EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+                    print("New exclusion list: "+str(EXCLUDED_NUMBERS))
             else:
-                print(f"Number {exclude_number} already in exclude.txt")
+                print(f"Number {exclude_number.replace("\n","")} already in exclude.txt")
 
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
