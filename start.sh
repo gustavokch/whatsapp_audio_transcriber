@@ -1,4 +1,5 @@
 #!/bin/bash
+GUSDIR=$(pwd)
 cd $GUSDIR
 . ./venv/bin/activate
 

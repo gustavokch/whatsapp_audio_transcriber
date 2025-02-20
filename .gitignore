@@ -19,3 +19,4 @@ exclude.txt
 reqs_installed
 start.sh
 llm_out.txt
+.pidfile

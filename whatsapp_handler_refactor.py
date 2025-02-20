@@ -191,6 +191,12 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
             if message.Info.MessageSource.IsGroup:
                 info_logger.info("Message is from a group, ignoring...")
                 return
+            if message.Info.MessageSource.IsFromMe and "/exclude " in message_type:
+                with open("exclude.txt", "w") as exclude_txt:
+                    msg_string =  str(message_type)
+                    exclude_number = msg_string.split("/exclude ")[1]
+                    print(f"Adding number {exclude_number} to exclude.txt")
+                    exclude_txt.write(exclude_number)
 
             # Check if sender is in exclusion list
             sender_jid = str(message.Info.MessageSource.Sender.User)
@@ -244,4 +250,7 @@ async def main():
         await client.disconnect()  # Ensure cleanup before exiting
 
 if __name__ == "__main__":
+    if not os.path.isfile("./exclude.txt"):
+        with open("exclude.txt", "x") as exclude_txt:
+            exclude_txt.write
     asyncio.run(main())
