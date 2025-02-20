@@ -193,7 +193,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
                 return
 
             # Check if sender is in exclusion list
-            sender_jid = str(message.Info.MessageSource.Chat.User)
+            sender_jid = str(message.Info.MessageSource.Sender.User)
             phone_number = sender_jid
             #phone_number = phone_number.replace('"','')
             if phone_number in EXCLUDED_NUMBERS:
@@ -205,6 +205,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
                 job = TranscriptionJob(client, message)
                 await job.extract_audio_details()
                 try:
+                    info_logger.info("Message passed exclusion checks, transcribing...")
                     await asyncio.wait_for(job.handle_audio_message(), timeout=15.0)
                 except asyncio.TimeoutError:
                     error_logger.error("Audio message handling timed out")
