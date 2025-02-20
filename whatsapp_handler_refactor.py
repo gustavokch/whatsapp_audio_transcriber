@@ -184,6 +184,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
             exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
             print(f"Adding number {exclude_number} to exclude.txt")
             exclude_txt.writelines(exclude_number)
+            load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
 
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
