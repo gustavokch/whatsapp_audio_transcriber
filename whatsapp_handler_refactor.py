@@ -182,7 +182,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
         with open("exclude.txt", "b+w") as exclude_txt:
 
             msg_string =  str(message_type)
-            exclude_number = str(msg_string.split("/exclude ")[1].split('"')[0]+"\n")
+            exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
             exclude_list = exclude_txt.readlines()
             if exclude_number not in exclude_list:
                 print(f"Adding number {exclude_number} to exclude.txt")
