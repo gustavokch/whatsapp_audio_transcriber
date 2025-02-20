@@ -193,8 +193,9 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
                 return
 
             # Check if sender is in exclusion list
-            sender_jid = message.Info.MessageSource.Chat
-            phone_number = sender_jid.split('@')[0]
+            sender_jid = str(message.Info.MessageSource.Chat.User)
+            phone_number = sender_jid
+            #phone_number = phone_number.replace('"','')
             if phone_number in EXCLUDED_NUMBERS:
                 info_logger.info(f"Sender {phone_number} is excluded. Skipping transcription.")
                 return
