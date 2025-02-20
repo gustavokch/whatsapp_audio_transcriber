@@ -1,5 +1,5 @@
 [Unit]
-Description=Restart WhatsApp Mime and Gus services
+Description=Restart WhatsApp transcription service(s)
 
 [Service]
 Type=oneshot

@@ -27,20 +27,21 @@ OnBootSec=0
 OnUnitActiveSec=2h
 """
     restarter_content = f"""[Unit]
-Description=Restart WhatsApp Mime and Gus services
+Description=Restart WhatsApp transcription service(s)
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
+ExecStart=/usr/bin/systemctl --user restart whatsapp_{name}.service
 
 [Install]
 WantedBy=default.target
 """
     timer_content = f"""[Unit]
-Description=Restart WhatsApp services every 2 hours
+Description=Run WhatsApp restart service every two hours
 
 [Timer]
-OnCalendar=*-*-* */2:00:00
+OnBootSec=60s
+OnUnitActiveSec=2h
 Persistent=true
 
 [Install]
@@ -79,21 +80,11 @@ def fix_start_script():
 
 def copy_files(name):
     os.system(f"cp -f whatsapp_*.service ~/.config/systemd/user/")
-    if name != "mime":
-        os.system(f"systemctl --user daemon-reload")
-        os.system(f"systemctl --user enable whatsapp_gus.service")
-        os.system(f"systemctl --user start whatsapp_gus.service")
-        print(f"Service enabled and started.")
-    elif name != "gus":
-        os.system(f"systemctl --user daemon-reload")
-        os.system(f"systemctl --user enable whatsapp_mime.service")
-        os.system(f"systemctl --user start whatsapp_mime.service")
-        print(f"Service enabled and started.")
-    else:
-        os.system(f"systemctl --user daemon-reload")
-        os.system(f"systemctl --user enable whatsapp_{name}.service")
-        os.system(f"systemctl --user start whatsapp_{name}.service")
-        print(f"Service enabled and started.")
+
+    os.system(f"systemctl --user daemon-reload")
+    os.system(f"systemctl --user enable whatsapp_{name}.service")
+    os.system(f"systemctl --user start whatsapp_gus.service")
+    print(f"Service enabled and started.")
     os.system(f"cp -f restart_whatsapp_services.* ~/.config/systemd/user/")
     os.system(f"systemctl --user daemon-reload")
     os.system(f"systemctl --user enable restart_whatsapp_services.service")
@@ -103,9 +94,6 @@ def copy_files(name):
 name = input("Name prefix: ")  # Replace with the desired name
 currentdir = os.getcwd()
 
-if name != "gus" and name != "mime":
-    print("Invalid name prefix. Please use 'gus' or 'mime'.")
-    exit(1)
 fix_start_script()
 create_systemd_unit(name)
 
