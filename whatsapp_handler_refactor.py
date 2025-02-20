@@ -181,7 +181,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type):
         with open("exclude.txt", "w") as exclude_txt:
             msg_string =  str(message_type)
-            exclude_number = msg_string.split("/exclude ")[1]
+            exclude_number = msg_string.split("/exclude ")[1].split('"')[0]
             print(f"Adding number {exclude_number} to exclude.txt")
             exclude_txt.write(exclude_number)
 
