@@ -179,11 +179,13 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     debug_logger.debug(f"Received message of type: {message_type}")
     send_reply = 1
     if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type):
-        with open("exclude.txt", "a") as exclude_txt:
+        with open("exclude.txt", "b+w") as exclude_txt:
 
             msg_string =  str(message_type)
             exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
-            if exclude_number not in exclude_txt.read:
+            exclude_list = list
+            exclude_list = exclude_txt.readlines
+            if exclude_number not in exclude_list:
                 print(f"Adding number {exclude_number} to exclude.txt")
                 exclude_txt.writelines(exclude_number)
                 load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
