@@ -5,7 +5,7 @@ A WhatsApp bot that automatically transcribes audio messages using the Groq API.
 ## Features
 
 - Automatically detects and processes audio messages.
-- Automatically avoids transcribing messages from group chats and any numbers on ```./exclude.txt.```
+- Automatically avoids transcribing messages from group chats and any numbers on ```./exclude.txt```.
 - Transcribes audio using Groq's Whisper API.
 - Replies with the transcription in the chat.
 - Supports multiple languages (default: Portuguese).
