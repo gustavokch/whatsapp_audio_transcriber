@@ -180,11 +180,15 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     send_reply = 1
     if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type):
         with open("exclude.txt", "a") as exclude_txt:
+
             msg_string =  str(message_type)
             exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
-            print(f"Adding number {exclude_number} to exclude.txt")
-            exclude_txt.writelines(exclude_number)
-            load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+            if exclude_number not in exclude_txt.readlines:
+                print(f"Adding number {exclude_number} to exclude.txt")
+                exclude_txt.writelines(exclude_number)
+                load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+            else:
+                print(f"Number {exclude_number} already in exclude.txt")
 
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
