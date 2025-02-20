@@ -191,7 +191,7 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
             if message.Info.MessageSource.IsGroup:
                 info_logger.info("Message is from a group, ignoring...")
                 return
-            if message.Info.MessageSource.IsFromMe and "/exclude " in message_type:
+            if message.Info.MessageSource.IsFromMe == True and "/exclude " in message_type:
                 with open("exclude.txt", "w") as exclude_txt:
                     msg_string =  str(message_type)
                     exclude_number = msg_string.split("/exclude ")[1]
