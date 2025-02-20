@@ -178,6 +178,13 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     message_type = get_message_type(message)
     debug_logger.debug(f"Received message of type: {message_type}")
     send_reply = 1
+    if message.Info.MessageSource.IsFromMe == True and "/exclude " in message_type:
+        with open("exclude.txt", "w") as exclude_txt:
+            msg_string =  str(message_type)
+            exclude_number = msg_string.split("/exclude ")[1]
+            print(f"Adding number {exclude_number} to exclude.txt")
+            exclude_txt.write(exclude_number)
+            
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
         send_reply = 0
@@ -191,12 +198,6 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
             if message.Info.MessageSource.IsGroup:
                 info_logger.info("Message is from a group, ignoring...")
                 return
-            if message.Info.MessageSource.IsFromMe == True and "/exclude " in message_type:
-                with open("exclude.txt", "w") as exclude_txt:
-                    msg_string =  str(message_type)
-                    exclude_number = msg_string.split("/exclude ")[1]
-                    print(f"Adding number {exclude_number} to exclude.txt")
-                    exclude_txt.write(exclude_number)
 
             # Check if sender is in exclusion list
             sender_jid = str(message.Info.MessageSource.Sender.User)
