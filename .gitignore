@@ -14,3 +14,7 @@ whatsapp_handler_mi.py
 __pycache__/cf_transcriber.cpython-312.pyc
 gus_whatsapp.service
 whatsapp_gus.service
+whatsapp_handler_refactor_mom.py
+exclude.txt
+reqs_installed
+start.sh
