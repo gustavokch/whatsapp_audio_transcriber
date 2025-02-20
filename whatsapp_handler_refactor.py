@@ -17,6 +17,24 @@ from neonize.utils.enum import ReceiptType, MediaType
 sys.path.insert(0, os.getcwd())
 
 # Constants
+
+# Define the path to your exclusion list file
+EXCLUDED_NUMBERS_FILE = "exclude.txt"
+
+# Read numbers from the file and store them in a set
+def load_excluded_numbers(filepath: str) -> set:
+    try:
+        with open(filepath, "r", encoding="utf-8") as file:
+            return {line.strip() for line in file if line.strip()}
+    except FileNotFoundError:
+        print(f"Warning: {filepath} not found. Using default exclusions.")
+        return set()
+
+# Load excluded numbers
+EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+
+print(EXCLUDED_NUMBERS)  # Debug: Print loaded numbers
+
 WHISPER_PROMPT = """Transcreva com precisão, preservando enunciados conforme falados. Corrija erros ortográficos comuns sem alterar a intenção original. Use pontuação e capitalização de forma natural para facilitar a leitura. Foda-se. Amorzinho."""
 LOG_DIR = "logs"
 MESSAGES_DIR = "./messages"
@@ -163,24 +181,42 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
         send_reply = 0
+    elif "audioMessage {" in str(message_type) and send_reply != 0:  # Check if it's an audio message
+        debug_logger.debug("Message is an audio message.")
+        if 'text: "*Transcrição automática:*' in str(message_type): 
+                info_logger.info("Message is already a transcription, ignoring...")
+                send_reply = 0
+        try:
+            # Skip group messages
+            if message.Info.MessageSource.IsGroup:
+                info_logger.info("Message is from a group, ignoring...")
+                return
+
+            # Check if sender is in exclusion list
+            sender_jid = str(message.Info.MessageSource.Sender.User)
+            phone_number = sender_jid
+            #phone_number = phone_number.replace('"','')
+            if phone_number in EXCLUDED_NUMBERS:
+                info_logger.info(f"Sender {phone_number} is excluded. Skipping transcription.")
+                return
+
+            # Proceed with transcription
+            if send_reply == 1:
+                job = TranscriptionJob(client, message)
+                await job.extract_audio_details()
+                try:
+                    info_logger.info("Message passed exclusion checks, transcribing...")
+                    await asyncio.wait_for(job.handle_audio_message(), timeout=15.0)
+                except asyncio.TimeoutError:
+                    error_logger.error("Audio message handling timed out")
+
+        except Exception as e:
+            error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
+            
     elif 'text: "*Transcrição automática:*' in str(message_type): 
         info_logger.info("Message is already a transcription, ignoring...")
         send_reply = 0
         
-    elif "audioMessage {" in str(message_type) and send_reply != 0:  # Check if it's an audio message
-        debug_logger.debug("Message is an audio message.")
-        try:
-            job = TranscriptionJob(client, message)
-            await job.extract_audio_details()
-            if message.Info.MessageSource.IsGroup == False:
-                try:
-                    await asyncio.wait_for(job.handle_audio_message(), timeout=15.0)
-                except asyncio.TimeoutError:
-                    error_logger.error("Audio message handling timed out")
-            else:
-                info_logger.info("Message is from a group, ignoring...")
-        except Exception as e:
-            error_logger.error(f"Error processing transcription in on_message handler: {e}", exc_info=True)
     else:
         debug_logger.debug(f"Ignoring non-audio message of type: {message_type}")
 
