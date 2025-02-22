@@ -91,12 +91,39 @@ def copy_files(name):
     os.system(f"systemctl --user enable restart_whatsapp_services.timer")
 
 # Example usage:
-name = input("Name prefix: ")  # Replace with the desired name
+def parse_name(calls_n):
+    if calls_n == 0:
+        name = input("Name prefix: ")  # Replace with the desired name
+        name_list.append(name)
+        
+    if calls_n > 1:
+        name = input("next name prefix: ")  # Replace with the desired name
+    add_another = input("Press 1 to add another prefix to the restart service")
+    if add_another != "":
+        calls_n = calls_n + 1
+        return name
+    if add_another == "1":
+        return 666
+    
 currentdir = os.getcwd()
+name_list = []
+calls_n = 0
+prefix = parse_name(calls_n)
+if prefix == 666:
+    name_list.append(parse_name(calls_n))
+    calls_n = calls_n + 1
+else:
+    if prefix not in name_list:
+        name_list.append(prefix)
+    fix_start_script()
+count = 0
+for n in name_list:
+    count = count + 1
+    create_systemd_unit(n)
 
-fix_start_script()
-create_systemd_unit(name)
-
-copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
-if copy == "1":
-    copy_files(name)
+if count >= len(name_list):
+    copy = input("Press '1' to copy the file to ~/.config/systemd/user/ and enable it: ")
+    if copy == "1":
+        for n in name_list:
+            name=name_list[n]
+            copy_files(name)

@@ -3,7 +3,7 @@ Description=Restart WhatsApp transcription service(s)
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemctl --user restart whatsapp_mime.service whatsapp_gus.service
+ExecStart=/usr/bin/systemctl --user restart whatsapp_gus.service whatsapp_mime.service whatsapp_mom.service
 
 [Install]
 WantedBy=default.target

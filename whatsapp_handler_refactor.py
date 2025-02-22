@@ -25,7 +25,10 @@ EXCLUDED_NUMBERS_FILE = "exclude.txt"
 def load_excluded_numbers(filepath: str) -> set:
     try:
         with open(filepath, "r", encoding="utf-8") as file:
-            return {line.strip() for line in file if line.strip()}
+            all_lines = file.readlines()
+            f_line = {line.strip() for line in all_lines}
+            file.close()
+            return f_line
     except FileNotFoundError:
         print(f"Warning: {filepath} not found. Using default exclusions.")
         return set()
@@ -178,23 +181,91 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
     message_type = get_message_type(message)
     debug_logger.debug(f"Received message of type: {message_type}")
     send_reply = 1
-    if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type):
-        with open("exclude.txt", "r") as exclude_txt:
+    def exclude_number_handler(exclude_number):
+        with open("exclude.txt", "r") as exclude_file:
+            exclude_list = exclude_file.readlines()
+            exclude_final = []
 
-            msg_string =  str(message_type)
-            exclude_number = msg_string.split("/exclude ")[1].split('"')[0]+"\n"
-            exclude_list = exclude_txt.readlines()
-            if exclude_number not in exclude_list:
+            for line in exclude_list:
+                exclude_final.append(line.strip()+"\n")
+
+            if exclude_number != None or exclude_number+"\n" or exclude_number not in exclude_list:
                 print(f"Adding number {exclude_number.replace("\n","")} to exclude.txt")
-                exclude_txt.close()
-                with open("exclude.txt","a") as exclude_append:
-                    exclude_append.writelines(exclude_number+"\n")
+                exclude_file.close()
+                # os.remove("exclude.txt")
+                with open("exclude.txt", "w") as exclude_append:
+                    excluded = 0
+                    for line in exclude_list:
+                        stripped_line = str(line.strip())
+                        if excluded != 1 and stripped_line not in exclude_final:
+                                if stripped_line in exclude_list:
+                                    exclude_final.append(stripped_line+"\n")
+                    if exclude_number or exclude_number+"\n" not in exclude_final:
+                        exclude_final.append(exclude_number+"\n")
+                        excluded = 1
+                    exclude_append.writelines(exclude_final)
                     exclude_append.close()
+
+            else:
+                with open("exclude.txt", "w") as exclude_write:
+                    exclude_write.writelines(exclude_list)
+                    print(f"Number {exclude_number.replace("\n","")} already in exclude.txt")
+                    exclude_txt.close()
+
+    def include_number_handler(include_number):    
+        with open("exclude.txt", "r") as exclude_file:
+            exclude_list = exclude_file.readlines()
+            if include_number+"\n" or include_number in exclude_list:
+                print(f"Removing number {include_number} from exclude.txt")
+                lines = exclude_list
+                updated_lines = []
+                include_line=include_number.strip()
+                count = len(exclude_list)
+                def check_line():
+                    n = 0
+                    for line in lines:
+                        stripped_line = line.strip()
+                        if line != "\n" and stripped_line != include_line:
+                            updated_lines.append(stripped_line)
+                            updated_lines.append("\n")
+                        if include_line in stripped_line:
+                            updated_lines.remove(include_line)
+                        n = n + 1
+                    return n
+                while True:
+                    if check_line() == count:
+                        break
+                    check_line()    
+            exclude_file.close()
+        with open("exclude.txt", "w") as exclude_write:
+            updated_lines.pop()
+            exclude_write.writelines(updated_lines)
+            exclude_write.close()
+
+    if message.Info.MessageSource.IsFromMe == True and "/exclude " in str(message_type) or "/include " in str(message_type):
+        with open("exclude.txt", "r") as exclude_txt:
+            file_lines = exclude_txt.readlines()
+            msg_string =  str(message_type)
+            try:
+                if msg_string.split("/exclude ")[1].split('"')[0]+"\n":
+                    exclude_number = msg_string.split("/exclude ")[1].split('"')[0]
+                    exclude_number_handler(exclude_number)      
                     EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
                     print("New exclusion list: "+str(EXCLUDED_NUMBERS))
-            else:
-                print(f"Number {exclude_number.replace("\n","")} already in exclude.txt")
+            except:
+                pass
+            try:
+                    include_number = msg_string.split("/include ")[1].split('"')[0]
+                    include_number_handler(include_number)
+                    EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+                    print("New exclusion list: "+str(EXCLUDED_NUMBERS))
+                    # EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
 
+            except:
+                pass
+    else:
+        exclude_txt = None
+ 
     if 'text: "Erro ao processar o áudio.' in str(message_type):
         info_logger.info("Message is a transcription error message, ignoring...")
         send_reply = 0
@@ -210,6 +281,8 @@ async def on_message(client: NewAClient, message: MessageEv) -> None:
                 return
 
             # Check if sender is in exclusion list
+            EXCLUDED_NUMBERS = load_excluded_numbers(EXCLUDED_NUMBERS_FILE)
+            print(EXCLUDED_NUMBERS)  # Debug: Print loaded numbers  
             sender_jid = str(message.Info.MessageSource.Sender.User)
             phone_number = sender_jid
             #phone_number = phone_number.replace('"','')

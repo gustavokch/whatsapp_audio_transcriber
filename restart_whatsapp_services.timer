@@ -1,8 +1,9 @@
 [Unit]
-Description=Restart WhatsApp services every 2 hours
+Description=Run WhatsApp restart service every two hours
 
 [Timer]
-OnCalendar=*-*-* */2:00:00
+OnBootSec=60s
+OnUnitActiveSec=2h
 Persistent=true
 
 [Install]
